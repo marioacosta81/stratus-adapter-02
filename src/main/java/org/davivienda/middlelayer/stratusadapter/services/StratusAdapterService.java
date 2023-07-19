@@ -64,6 +64,9 @@ public class StratusAdapterService {
     }
 
     public Map<String,Object> buildDataWeft(BuildDataWeftRequestDto request)throws StratusAdapterException {
+
+
+
         ConfigTramaDto configTramaDto = request.getConfigTramaDto();
 
         List<DataAttributeDto> listConfigAttributes = configTramaDto.getAttributesList();
@@ -83,6 +86,9 @@ public class StratusAdapterService {
 
 
     }
+
+
+
 
 
 

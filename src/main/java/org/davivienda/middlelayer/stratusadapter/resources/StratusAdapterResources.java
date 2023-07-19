@@ -10,6 +10,8 @@ import org.davivienda.middlelayer.stratusadapter.model.dtos.BuildStratusWeftRequ
 import org.davivienda.middlelayer.stratusadapter.model.dtos.StratusAdapterResponseDto;
 import org.davivienda.middlelayer.stratusadapter.model.exceptions.StratusAdapterException;
 import org.davivienda.middlelayer.stratusadapter.services.StratusAdapterService;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 import java.util.Map;
 
@@ -23,21 +25,21 @@ public class StratusAdapterResources {
 
     @POST()
     @Path("/build-weft")
-    public Response buildStratusWeft(  BuildStratusWeftRequestDto request  ) throws StratusAdapterException
+    public RestResponse<StratusAdapterResponseDto> buildStratusWeft(  BuildStratusWeftRequestDto request  ) throws StratusAdapterException
     {
         final String strWeft = stratusAdapterService.buildStratusWeft(request);
 
         StratusAdapterResponseDto response = new StratusAdapterResponseDto();
         response.setDataResponse(strWeft);
         response.setStatus(true);
-        return Response.ok(response).build();
+        return RestResponse.ok(response);
     }
 
 
 
     @POST()
     @Path("/build-data")
-    public Response buildDataWeft(  BuildDataWeftRequestDto request  ) throws StratusAdapterException
+    public RestResponse<StratusAdapterResponseDto> buildDataWeft(BuildDataWeftRequestDto request  ) throws StratusAdapterException
     {
         if(true) {
             throw new StratusAdapterException("El campo  no existe en la data");
@@ -47,8 +49,13 @@ public class StratusAdapterResources {
         StratusAdapterResponseDto response = new StratusAdapterResponseDto();
         response.setDataResponse(data);
         response.setStatus(true);
-        return Response.ok(response).build();
+        return RestResponse.ok(response,MediaType.APPLICATION_JSON);
     }
+
+
+
+
+
 
 
 }
