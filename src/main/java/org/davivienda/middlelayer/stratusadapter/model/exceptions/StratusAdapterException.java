@@ -1,31 +1,21 @@
 package org.davivienda.middlelayer.stratusadapter.model.exceptions;
 
+import jakarta.ws.rs.core.Response;
+import lombok.Getter;
+
 import java.io.Serializable;
 
-public class StratusAdapterException extends
-        RuntimeException implements Serializable {
+@Getter
+public class StratusAdapterException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private Response.Status status;
 
-    public StratusAdapterException() {
-    }
 
-    public StratusAdapterException(String message) {
+    public StratusAdapterException(Response.Status status, String message) {
         super(message);
+        this.status = status;
     }
 
-    public StratusAdapterException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public StratusAdapterException(Throwable cause) {
-        super(cause);
-    }
-
-    public StratusAdapterException(String message, Throwable cause,
-                           boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 
 
 }

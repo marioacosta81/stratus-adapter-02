@@ -1,6 +1,8 @@
 package org.davivienda.middlelayer.stratusadapter.model.enums;
 
 import javax.lang.model.element.Element;
+import java.util.Arrays;
+import java.util.Optional;
 
 public enum ConfigDataTypeEnum {
     STRING("string"),
@@ -14,13 +16,8 @@ public enum ConfigDataTypeEnum {
         this.label = label;
     }
 
-    public static ConfigDataTypeEnum valueOfLabel(String label){
-        for(ConfigDataTypeEnum e: values()){
-            if(e.label.equals(label)){
-                return e;
-            }
-        }
-        return null;
+    public static Optional<ConfigDataTypeEnum> valueOfLabel(String label){
+        return Arrays.stream(values()).filter( e -> e.label.equals(label)).findFirst();
     }
 
 

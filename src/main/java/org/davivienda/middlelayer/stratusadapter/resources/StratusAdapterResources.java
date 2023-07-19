@@ -41,9 +41,7 @@ public class StratusAdapterResources {
     @Path("/build-data")
     public RestResponse<StratusAdapterResponseDto> buildDataWeft(BuildDataWeftRequestDto request  ) throws StratusAdapterException
     {
-        if(true) {
-            throw new StratusAdapterException("El campo  no existe en la data");
-        }
+
         final Map<String,Object> data = stratusAdapterService.buildDataWeft(request);
 
         StratusAdapterResponseDto response = new StratusAdapterResponseDto();

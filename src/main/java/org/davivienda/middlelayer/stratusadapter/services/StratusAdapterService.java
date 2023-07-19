@@ -1,22 +1,30 @@
 package org.davivienda.middlelayer.stratusadapter.services;
 
 import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.core.Response;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.BuildDataWeftRequestDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.ConfigTramaDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.DataAttributeDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.BuildStratusWeftRequestDto;
 import org.davivienda.middlelayer.stratusadapter.model.exceptions.StratusAdapterException;
 import org.davivienda.middlelayer.stratusadapter.utilities.StringUtilities;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.graalvm.nativeimage.c.function.CEntryPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Dependent
 public class StratusAdapterService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( StratusAdapterService.class);
+
+
+    @ConfigProperty(name = "message.error.attribute.no.data")
+    private String messageErrorAttributeNoData;
+
 
     public String buildStratusWeft(BuildStratusWeftRequestDto request  )throws StratusAdapterException {
 
@@ -46,8 +54,10 @@ public class StratusAdapterService {
         }).findFirst();
 
         if(attributeFilter.isEmpty()){
-            LOGGER.error("El campo  " + idNameAttribute +" no existe en la data"  );
-            throw new StratusAdapterException("El campo  " + idNameAttribute +" no existe en la data"  ) ;
+            LOGGER.error( String.format(messageErrorAttributeNoData,idNameAttribute ));
+            throw new StratusAdapterException(
+                    Response.Status.NOT_FOUND,
+                    String.format(messageErrorAttributeNoData,idNameAttribute ));
         }
 
         return  String.valueOf( attributeFilter.get().getValue());
@@ -83,6 +93,36 @@ public class StratusAdapterService {
 
 
         return data;
+
+
+    }
+
+
+    private void requestBuildDataWeftValidations(
+            BuildDataWeftRequestDto request)throws StratusAdapterException{
+
+        if(null==request.getWeft()|| request.getWeft().isEmpty()){
+            //throw new StratusAdapterException("Error. La trama no puede ser vacia");
+        }
+
+        /**************************************************/
+
+        Integer sizeConfigWeft =
+                request.getConfigTramaDto().getAttributesList()
+                        .stream().collect(Collectors.summingInt(DataAttributeDto::getSizeAttribute));
+
+        if(sizeConfigWeft.equals(request.getConfigTramaDto().getSize())){
+            //throw new StratusAdapterException( "Error. El tamaño configurado de la trama es incorrecto");
+        }
+
+        /********************************************************** */
+
+        request.getConfigTramaDto().getAttributesList().forEach( attribute ->{
+
+        });
+
+
+
 
 
     }

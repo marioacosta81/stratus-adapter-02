@@ -3,13 +3,13 @@ package org.davivienda.middlelayer.stratusadapter.model.dtos;
 import lombok.Data;
 
 @Data
-public class ErrorMessageDto {
+public class StratusErrorResponseDto {
     private String message;
     private Boolean status;
 
-    public ErrorMessageDto(String message, Boolean status) {
+    public StratusErrorResponseDto(String message) {
         this.message = message;
-        this.status = status;
+        this.status = false;
     }
 
 
