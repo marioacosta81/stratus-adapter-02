@@ -1,10 +1,16 @@
 package org.davivienda.middlelayer.stratusadapter.utilities;
 
+import org.davivienda.middlelayer.stratusadapter.model.dtos.DataAttributeDto;
+
 public class StringUtilities {
 
     public static final String EMPTY = "";
 
-    public static String fixZeroLeftStringSize(String stringValue, Integer size){
+    public static String fixPaddingStringSize(DataAttributeDto dataAttributeDto, String stringValue){
+        var size = dataAttributeDto.getSizeAttribute();
+        var paddingCharacter = dataAttributeDto.getPaddingCharacter();
+        var leftPaddingDirection = dataAttributeDto.getLeftPaddingDirection();
+
         if(null == stringValue || stringValue.isEmpty()){
             return stringValue;
         }
@@ -12,7 +18,11 @@ public class StringUtilities {
             return stringValue.substring(0,size);
         }
         while ( size > stringValue.length()){
-            stringValue = "0" + stringValue;
+            if(leftPaddingDirection) {
+                stringValue = paddingCharacter + stringValue;
+            }else{
+                stringValue = stringValue + paddingCharacter;
+            }
         }
         return stringValue;
     }

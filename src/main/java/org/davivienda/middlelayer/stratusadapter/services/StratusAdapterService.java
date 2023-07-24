@@ -7,9 +7,9 @@ import org.davivienda.middlelayer.stratusadapter.model.dtos.ConfigTramaDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.DataAttributeDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.BuildStratusWeftRequestDto;
 import org.davivienda.middlelayer.stratusadapter.model.exceptions.StratusAdapterException;
-import org.davivienda.middlelayer.stratusadapter.services.validations.attribute.AttributeTypeValidation;
-import org.davivienda.middlelayer.stratusadapter.services.validations.attribute.WeftRequestValidation;
+import org.davivienda.middlelayer.stratusadapter.services.validations.AttributeTypeRuleValidation;
 import org.davivienda.middlelayer.stratusadapter.utilities.StringUtilities;
+import org.davivienda.middlelayer.stratusadapter.utilities.ValidationsUtilities;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +37,9 @@ public class StratusAdapterService {
 
         var sbWeft = new StringBuilder();
         listConfigAttributes.forEach(attribute -> {
-            String attributeData = getValueInData( data,attribute.getIdName());
-            attributeData = StringUtilities.fixZeroLeftStringSize(attributeData, attribute.getSizeAttribute());
-            sbWeft.append(attributeData);
+            String attributeDataValue = getValueInData( data,attribute.getIdName());
+            attributeDataValue = StringUtilities.fixPaddingStringSize(attribute,attributeDataValue );
+            sbWeft.append(attributeDataValue);
         });
 
         return sbWeft.toString();
@@ -47,7 +47,7 @@ public class StratusAdapterService {
 
 
     private String getValueInData(Map<Object,Object> data, String idNameAttribute)throws StratusAdapterException{
-        Optional<Map.Entry<Object,Object>> attributeFilter =  data.entrySet().stream().filter(entry ->extracted(idNameAttribute, entry)).findFirst();
+        Optional<Map.Entry<Object,Object>> attributeFilter =  data.entrySet().stream().filter(entry ->existEntry(idNameAttribute, entry)).findFirst();
 
         if(attributeFilter.isEmpty()){
             LOGGER.error( messageErrorAttributeNoData,idNameAttribute );
@@ -59,7 +59,7 @@ public class StratusAdapterService {
     }
 
 
-    private boolean extracted(String idNameAttribute, Entry<Object, Object> entry) {
+    private boolean existEntry(String idNameAttribute, Entry<Object, Object> entry) {
         if( entry.getKey() instanceof Map){
             getValueInData( (Map<Object,Object>)entry.getKey(),idNameAttribute);
         }
@@ -75,34 +75,26 @@ public class StratusAdapterService {
         final String weft = request.getWeft();
         Map<String, Object> data = new HashMap<>();
 
-        //listConfigAttributes.forEach( attribute-> {
-        for (DataAttributeDto attribute : listConfigAttributes){
-
-
+        listConfigAttributes.forEach( attribute-> {
             Integer weftPosition = attribute.getWeftPosition();
-        Integer size = attribute.getSizeAttribute();
+            Integer size = attribute.getSizeAttribute();
 
-        var attributeValue = weft.substring(weftPosition - 1, (weftPosition + size) - 1);
-
-
-        AttributeTypeValidation<DataAttributeDto> attributeTypeValidation
-                = new AttributeTypeValidation<>(attribute, attributeValue);
-
-        weftValidations(new WeftRequestValidation[]{attributeTypeValidation});
+            var attributeValue = weft.substring(weftPosition - 1, (weftPosition + size) - 1);
+            attributeValue = attributeValue.replace(attribute.getPaddingCharacter(), StringUtilities.EMPTY   );
 
 
-        data.put(attribute.getIdName(), attributeValue);
-    }
-            //});
+            AttributeTypeRuleValidation<DataAttributeDto> attributeTypeValidation
+                = new AttributeTypeRuleValidation<>(attribute, attributeValue);
+
+            ValidationsUtilities.WeftRequestValidationsExecute(attributeTypeValidation);
+
+            data.put(attribute.getIdName(), attributeValue);
+
+        });
         return data;
-    }git status
-
-
-    private void weftValidations(WeftRequestValidation[] arrayValidations)throws StratusAdapterException{
-        Arrays.asList(arrayValidations).forEach(validation -> {
-            validation.validate( );
-                });
     }
+
+
 
 
 

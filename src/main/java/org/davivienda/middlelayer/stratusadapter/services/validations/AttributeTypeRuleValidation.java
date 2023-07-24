@@ -1,4 +1,4 @@
-package org.davivienda.middlelayer.stratusadapter.services.validations.attribute;
+package org.davivienda.middlelayer.stratusadapter.services.validations;
 
 import org.davivienda.middlelayer.stratusadapter.model.dtos.DataAttributeDto;
 import org.davivienda.middlelayer.stratusadapter.model.enums.ConfigDataTypeEnum;
@@ -8,7 +8,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class AttributeTypeValidation<T> extends  WeftRequestValidation<T>{
+public class AttributeTypeRuleValidation<T> extends RuleRequestValidation<T> {
 
 
     @ConfigProperty(name = "message.error.attribute.type.validation")
@@ -17,7 +17,7 @@ public class AttributeTypeValidation<T> extends  WeftRequestValidation<T>{
     @ConfigProperty(name = "date.pattern.attribute.type.validation")
     private String datePattern;
 
-    public AttributeTypeValidation(T config, String value) {
+    public AttributeTypeRuleValidation(T config, String value) {
         super(config, value);
     }
 

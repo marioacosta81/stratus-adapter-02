@@ -1,13 +1,13 @@
-package org.davivienda.middlelayer.stratusadapter.services.validations.attribute;
+package org.davivienda.middlelayer.stratusadapter.services.validations;
 
 import org.davivienda.middlelayer.stratusadapter.model.exceptions.RequestValidationException;
 
-public abstract class WeftRequestValidation<T> implements  IWeftRequestValidation<T>{
+public abstract class RuleRequestValidation<T> implements IRuleRequestValidation<T> {
 
     protected T config;
     protected String value;
 
-    public WeftRequestValidation(T config, String value){
+    public RuleRequestValidation(T config, String value){
         this.config = config;
         this.value = value;
     }

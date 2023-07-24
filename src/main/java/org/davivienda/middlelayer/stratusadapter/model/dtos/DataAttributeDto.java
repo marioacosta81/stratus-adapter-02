@@ -8,7 +8,7 @@ public class DataAttributeDto {
     private Integer weftPosition;
     private Integer sizeAttribute;
     private String dataConfigType;
-    private Character paddingCharacter;
+    private String paddingCharacter;
     private Boolean leftPaddingDirection;
     private String defaultValue;
 
