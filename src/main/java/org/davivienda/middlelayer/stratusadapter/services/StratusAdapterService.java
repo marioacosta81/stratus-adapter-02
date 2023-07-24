@@ -1,7 +1,7 @@
 package org.davivienda.middlelayer.stratusadapter.services;
 
 import jakarta.enterprise.context.Dependent;
-import jakarta.ws.rs.core.Response;
+import jakarta.inject.Inject;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.BuildDataWeftRequestDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.ConfigTramaDto;
 import org.davivienda.middlelayer.stratusadapter.model.dtos.DataAttributeDto;
@@ -26,6 +26,12 @@ public class StratusAdapterService {
     @ConfigProperty(name = "message.error.attribute.no.data")
     private String messageErrorAttributeNoData;
 
+    @ConfigProperty(name = "date.pattern.attribute.type.validation")
+    private String datePattern;
+
+    @Inject
+    AttributeTypeRuleValidation<DataAttributeDto> attributeTypeRuleValidation;
+
 
     public String buildStratusWeft(BuildStratusWeftRequestDto request  )throws StratusAdapterException {
 
@@ -37,7 +43,13 @@ public class StratusAdapterService {
 
         var sbWeft = new StringBuilder();
         listConfigAttributes.forEach(attribute -> {
-            String attributeDataValue = getValueInData( data,attribute.getIdName());
+            var attributeDataValue = StringUtilities.EMPTY;
+            Optional<String> opAttributeDataValue = getValueInData( data,attribute.getIdName());
+            if(opAttributeDataValue.isEmpty()){
+                attributeDataValue = attribute.getDefaultValue();
+            }else{
+                attributeDataValue = opAttributeDataValue.get();
+            }
             attributeDataValue = StringUtilities.fixPaddingStringSize(attribute,attributeDataValue );
             sbWeft.append(attributeDataValue);
         });
@@ -46,16 +58,14 @@ public class StratusAdapterService {
     }
 
 
-    private String getValueInData(Map<Object,Object> data, String idNameAttribute)throws StratusAdapterException{
+    private Optional<String> getValueInData(Map<Object,Object> data, String idNameAttribute)throws StratusAdapterException{
         Optional<Map.Entry<Object,Object>> attributeFilter =  data.entrySet().stream().filter(entry ->existEntry(idNameAttribute, entry)).findFirst();
 
         if(attributeFilter.isEmpty()){
-            LOGGER.error( messageErrorAttributeNoData,idNameAttribute );
-            throw new StratusAdapterException(
-                    Response.Status.BAD_REQUEST,
-                    String.format(messageErrorAttributeNoData,idNameAttribute ));
+            return Optional.empty();
         }
-        return  String.valueOf( attributeFilter.get().getValue());
+        var valueInData = String.valueOf( attributeFilter.get().getValue());
+        return  Optional.ofNullable(valueInData);
     }
 
 
@@ -75,22 +85,25 @@ public class StratusAdapterService {
         final String weft = request.getWeft();
         Map<String, Object> data = new HashMap<>();
 
-        listConfigAttributes.forEach( attribute-> {
-            Integer weftPosition = attribute.getWeftPosition();
-            Integer size = attribute.getSizeAttribute();
+        //listConfigAttributes.forEach( attribute-> {
+        for( DataAttributeDto   attribute:listConfigAttributes){
+                    Integer weftPosition = attribute.getWeftPosition();
+                    Integer size = attribute.getSizeAttribute();
 
-            var attributeValue = weft.substring(weftPosition - 1, (weftPosition + size) - 1);
-            attributeValue = attributeValue.replace(attribute.getPaddingCharacter(), StringUtilities.EMPTY   );
+                    var attributeValue = weft.substring(weftPosition - 1, (weftPosition + size) - 1);
+                    attributeValue = attributeValue.replace(attribute.getPaddingCharacter(), StringUtilities.EMPTY);
 
 
-            AttributeTypeRuleValidation<DataAttributeDto> attributeTypeValidation
-                = new AttributeTypeRuleValidation<>(attribute, attributeValue);
+             //attributeTypeRuleValidation = new AttributeTypeRuleValidation<DataAttributeDto>(attribute, attributeValue);
 
-            ValidationsUtilities.WeftRequestValidationsExecute(attributeTypeValidation);
+                    attributeTypeRuleValidation.create(attribute, attributeValue);
 
-            data.put(attribute.getIdName(), attributeValue);
 
-        });
+                    ValidationsUtilities.WeftRequestValidationsExecute(attributeTypeRuleValidation);
+
+                    data.put(attribute.getIdName(), attributeValue);
+                }
+        //});
         return data;
     }
 

@@ -20,7 +20,7 @@ import java.util.Map;
 @Produces(MediaType.APPLICATION_JSON)
 public class StratusAdapterResources {
 
-   @Inject
+    @Inject
     StratusAdapterService stratusAdapterService;
 
     @POST()
