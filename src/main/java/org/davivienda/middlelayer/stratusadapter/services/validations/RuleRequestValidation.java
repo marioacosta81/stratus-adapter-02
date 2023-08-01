@@ -6,12 +6,6 @@ public abstract class RuleRequestValidation<T> implements IStratusAdapterValidat
 
     protected T config;
     protected String value;
-
-    /*public RuleRequestValidation(T config, String value){
-        this.config = config;
-        this.value = value;
-    }*/
-
     @Override
     public abstract void validate() throws RequestValidationException;
 

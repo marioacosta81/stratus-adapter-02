@@ -8,7 +8,9 @@ import java.util.List;
 @Data
 public class ConfigTramaDto {
 
-    private int size;
+    private String task_code;
+    private String transaction_code;
+    private String total_length;
     private List<DataAttributeDto> attributesList;
 
 }

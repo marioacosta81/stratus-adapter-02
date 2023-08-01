@@ -34,19 +34,19 @@ public class AttributeTypeRuleValidation<T> extends RuleRequestValidation<T> {
 
         DataAttributeDto attribute = (DataAttributeDto)this.config;
 
-        Optional<ConfigDataTypeEnum> opType = ConfigDataTypeEnum.valueOfLabel(attribute.getDataConfigType());
+        Optional<ConfigDataTypeEnum> opType = ConfigDataTypeEnum.valueOfLabel(attribute.getData_type());
         if(opType.isEmpty()){
-            throw new RequestValidationException( String.format( errorMessageTypeNotFound,attribute.getDataConfigType()));
+            throw new RequestValidationException( String.format( errorMessageTypeNotFound,attribute.getData_type()));
         }
 
 
-        ConfigDataTypeEnum type =   (ConfigDataTypeEnum.valueOfLabel(attribute.getDataConfigType())).get();
+        ConfigDataTypeEnum type =   (ConfigDataTypeEnum.valueOfLabel(attribute.getData_type())).get();
 
         if(ConfigDataTypeEnum.NUMBER.equals( type )){
             try {
                 Double.parseDouble(value);
             }catch (NumberFormatException  e){
-                throw new RequestValidationException( String.format( errorMessageDatePattern,attribute.getIdName(),value,type.getLabel()));
+                throw new RequestValidationException( String.format( errorMessageDatePattern,attribute.getId_name(),value,type.getLabel()));
             }
 
         }else  if(ConfigDataTypeEnum.DATE.equals( type )){
@@ -57,7 +57,7 @@ public class AttributeTypeRuleValidation<T> extends RuleRequestValidation<T> {
             {
                 dateFormat.parse(value);
             }catch (ParseException e){
-                throw new RequestValidationException( String.format( errorMessageDatePattern,attribute.getIdName(),value,type.getLabel()));
+                throw new RequestValidationException( String.format( errorMessageDatePattern,attribute.getId_name(),value,type.getLabel()));
             }
         }
     }

@@ -5,11 +5,12 @@ import org.davivienda.middlelayer.stratusadapter.model.dtos.DataAttributeDto;
 public class StringUtilities {
 
     public static final String EMPTY = "";
+    public static final String DOC = ".";
 
     public static String fixPaddingStringSize(DataAttributeDto dataAttributeDto, String stringValue){
-        var size = dataAttributeDto.getSizeAttribute();
-        var paddingCharacter = dataAttributeDto.getPaddingCharacter();
-        var leftPaddingDirection = dataAttributeDto.getLeftPaddingDirection();
+        var size = dataAttributeDto.getLength();
+        var paddingCharacter = dataAttributeDto.getPadding_character();
+        var leftPaddingDirection = dataAttributeDto.getLeft_padding();
 
         if(null == stringValue || stringValue.isEmpty()){
             return stringValue;

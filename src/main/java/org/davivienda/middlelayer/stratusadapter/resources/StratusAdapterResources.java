@@ -42,7 +42,7 @@ public class StratusAdapterResources {
     public RestResponse<StratusAdapterResponseDto> buildDataWeft(BuildDataWeftRequestDto request  ) throws StratusAdapterException
     {
 
-        final Map<String,Object> data = stratusAdapterService.buildDataWeft(request);
+        final Map<Object,Object> data = stratusAdapterService.buildDataWeft(request);
 
         StratusAdapterResponseDto response = new StratusAdapterResponseDto();
         response.setDataResponse(data);
