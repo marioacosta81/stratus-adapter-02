@@ -1,0 +1,18 @@
+name: Requirements Backend
+on:
+  pull_request:
+    branches: [ integration, laboratory, main ]
+
+jobs:
+  requirements-backend:
+    permissions:
+      id-token: write
+      contents: read
+    uses: davivienda-colombia/davi-coe-reusable-pipeline/.github/workflows/requirements_java_backend.yml@v1.4.1
+    with:
+      language: "java"
+      java-version: "17"
+      path-environments-variables: "pipeline/integration-task-definition-virginia.json pipeline/laboratory-task-definition-virginia.json pipeline/production-task-definition-virginia.json"
+      sonar-project-properties-file: ./sonar-custom-project.properties
+      coverage-file: ./target/jacoco-report/jacoco.xml
+    secrets: inherit
