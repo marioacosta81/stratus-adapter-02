@@ -19,6 +19,10 @@
 		<quarkus-amazon-services.version>2.3.0</quarkus-amazon-services.version>
 
 
+
+
+
+
 	</properties>
 	<dependencyManagement>
 		<dependencies>
